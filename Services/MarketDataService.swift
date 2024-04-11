@@ -20,9 +20,20 @@ final class MarketDataService {
   }
 
   func getMarketData() {
+    guard let configPath = Bundle.main.path(forResource: "Config", ofType: "plist"),
+          let config = NSDictionary(contentsOfFile: configPath),
+          let apiKey = config["API_KEY"] as? String else {
+
+      print("API key not found in configuration file")
+      return
+    }
+
     guard let url = URL(
-      string: "https://api.coingecko.com/api/v3/global?&x_cg_demo_api_key=CG-CGhw4JokFzv2P6kbQtCbKkuK"
-    ) else { return }
+      string: "https://api.coingecko.com/api/v3/global?\(apiKey)"
+    ) else {
+      print("URL error")
+      return
+    }
 
     let decoder = JSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
